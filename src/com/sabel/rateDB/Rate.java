@@ -1,10 +1,9 @@
 package com.sabel.rateDB;
 
 public class Rate {
-
     private long timestamp;
-    private double rateEUR, rateUSD;
-
+    private double rateEUR;
+    private double rateUSD;
 
     public Rate() {
     }
@@ -65,8 +64,6 @@ public class Rate {
 
     @Override
     public String toString() {
-        return "Zeitstempel: " + timestamp
-                + "rateEUR" + rateEUR
-                + "rateUS" + rateUSD;
+        return this.timestamp + "\t" + this.rateEUR;
     }
 }

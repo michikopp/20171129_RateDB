@@ -1,59 +1,44 @@
 package com.sabel.rateDB;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class RatesService {
 
     private Connection connection;
-    private PreparedStatement pStatInsert, pStatSelect;
-    private static final String URL = "jdbc:sqlite:d:\\Kopp\\_Privat\\Programmieren\\IdeaProjects\\20171129_RateDB\\rateDB.sqlite";
+    private PreparedStatement pStatInsert;
+    private PreparedStatement pStatSelect;
+    private PreparedStatement pStatSelctLastRate;
 
     public RatesService() throws SQLException {
-        this.connection = DriverManager.getConnection(URL);
-        this.pStatInsert = connection.prepareStatement("");
-        this.pStatSelect = connection.prepareStatement("");
-
+        this.connection = DriverManager.getConnection("jdbc:sqlite://D:/Rates.sqlite");
+        this.pStatSelect = connection.prepareStatement("SELECT * FROM rate");
+        this.pStatInsert = connection.prepareStatement("INSERT INTO rate (timestamp, rateEUR, rateUSD) VALUES(?,?,?)");
+//        this.pStatSelctLastRate = connection.prepareStatement("SELECT * FROM rate where ");
     }
-
-    public void save(Rate rate) throws SQLException {
-        String sql = "INSERET INTO rateDB VALUES (" + rate.getTimestamp() + ", "
-                + rate.getRateEUR() + ", " + rate.getRateUSD() + ")";
-        this.pStatInsert.executeUpdate(sql);
-    }
-
 
     public void close() throws SQLException {
-        if (pStatInsert != null) {
-            pStatInsert.close();
-        }
-        if (pStatSelect != null) {
-            pStatSelect.close();
-        }
         if (connection != null) {
             connection.close();
         }
+        connection = null;
     }
 
-
-    public RateDB readAllRates() throws SQLException {
-        RateDB rateDB = new RateDB();
-        String sql = "SELECT timtestamp, rateEUR, rateUSD FROM rateDB";
-        ResultSet resultSet = this.pStatSelect.executeQuery(sql);
-        if (resultSet.next()) {
-            rateDB.add(resultSet.getLong(1), resultSet.getDouble(2), resultSet.getDouble(3));
-        }
-
-
-
-        return rateDB;
+    public void save(Rate rate) throws SQLException {
+        pStatInsert.setLong(1, rate.getTimestamp());
+        pStatInsert.setDouble(2, rate.getRateEUR());
+        pStatInsert.setDouble(3, rate.getRateUSD());
+        pStatInsert.executeUpdate();
     }
 
-
-    public Rate readLastRate() throws SQLException {
-        String sql = "SELECT timtestamp, rateEUR, rateUSD FROM rateDB ORDER BY timestamp DESC LIMIT 1";
-        ResultSet resultSet = this.pStatSelect.executeQuery(sql);
-        Rate rate = new Rate(resultSet.getLong(1), resultSet.getDouble(2), resultSet.getDouble(3));
-        return  rate;
+    public RateDB readAllRates(){
+        return null;
     }
-    
+
+    public Rate getLastRate(){
+
+        return null;
+    }
 }

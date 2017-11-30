@@ -1,71 +1,67 @@
 package com.sabel.rateDB;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class RateDB {
-
-    private List<Rate> liste;
+    private List<Rate> list;
 
     public RateDB() {
-        this.liste = new ArrayList<>();
+        this.list = new ArrayList<>();
     }
 
     public int size() {
-        return liste.size();
+        return list.size();
     }
 
     public boolean add(Rate rate) {
-        return liste.add(rate);
+        return list.add(rate);
     }
 
     public boolean add(long timestamp, double rateEUR, double rateUSD) {
-        return liste.add(new Rate(timestamp, rateEUR, rateUSD));
+        return add(new Rate(timestamp, rateEUR, rateUSD));
     }
 
-    public Rate getLastRate() {
-        return liste.get(liste.size());
+    public Rate getLastRate(){
+        return list.get(list.size() - 1);
     }
-
 
     public Rate get(int index) {
-        return liste.get(index);
+        return list.get(index);
     }
 
-    public List get(long beginTimestamp, long endTimestamp) {
-        List<Rate> returnList = new ArrayList<>();
-        for (Rate rate: liste) {
-            if (beginTimestamp == rate.getTimestamp()){
-                do{
-                    returnList.add(rate);
-                }while(endTimestamp == rate.getTimestamp());
+    public List<Rate> get(long beginTimestamp, long endTimestamp){
+        List<Rate> newList = new ArrayList<>();
+        for (Rate rate : list) {
+            long rateTimestamp = rate.getTimestamp();
+            if (rateTimestamp> beginTimestamp &&  rateTimestamp < endTimestamp){
+                newList.add(rate);
             }
         }
-        
-        return returnList;
+        return newList;
     }
 
+    // TODO
     public Rate remove(long timestamp) {
-        Rate rateReturn = null;
-        for (Rate rate:liste) {
-            if (timestamp == rate.getTimestamp()) {
-                rateReturn = rate;
+        Iterator<Rate> iterator = list.iterator();
+        while (iterator.hasNext()){
+            Rate nextRate = iterator.next();
+            if (nextRate.getTimestamp() == timestamp){
+                iterator.remove();
+                return nextRate;
             }
         }
-        return rateReturn;
+        return null;
     }
-
 
     @Override
     public String toString() {
-        String rueckgabe = "";
-
-        rueckgabe += "Zeitstempel" + "RateInEuro\n";
-
-        for (Rate rate: liste) {
-            rueckgabe += rate.getTimestamp() + rate.getRateEUR() + "\n";
-
+        StringBuilder sb = new StringBuilder("Rate DB:");
+        sb.append(String.format("%n"));
+        for (Rate rate : list) {
+            sb.append(rate.toString());
         }
-        return rueckgabe;
+        return sb.toString();
     }
 }
