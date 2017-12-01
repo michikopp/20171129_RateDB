@@ -5,63 +5,76 @@ import java.util.Iterator;
 import java.util.List;
 
 public class RateDB {
-    private List<Rate> list;
+
+    private List<Rate> liste;
 
     public RateDB() {
-        this.list = new ArrayList<>();
+        this.liste = new ArrayList<>();
     }
 
     public int size() {
-        return list.size();
+        return liste.size();
     }
 
     public boolean add(Rate rate) {
-        return list.add(rate);
+        return liste.add(rate);
     }
 
     public boolean add(long timestamp, double rateEUR, double rateUSD) {
-        return add(new Rate(timestamp, rateEUR, rateUSD));
+        return liste.add(new Rate(timestamp, rateEUR, rateUSD));
     }
 
-    public Rate getLastRate(){
-        return list.get(list.size() - 1);
+    public Rate getLastRate() {
+        return liste.get(liste.size()-1);
     }
+
 
     public Rate get(int index) {
-        return list.get(index);
+        return liste.get(index);
     }
 
-    public List<Rate> get(long beginTimestamp, long endTimestamp){
-        List<Rate> newList = new ArrayList<>();
-        for (Rate rate : list) {
-            long rateTimestamp = rate.getTimestamp();
-            if (rateTimestamp> beginTimestamp &&  rateTimestamp < endTimestamp){
-                newList.add(rate);
+    public List get(long beginTimestamp, long endTimestamp) {
+        List<Rate> returnList = new ArrayList<>();
+        for (Rate rate: liste) {
+
+            if (rate.getTimestamp() >= beginTimestamp && rate.getTimestamp() <= endTimestamp) {
+                returnList.add(rate);
             }
         }
-        return newList;
+
+        return returnList;
     }
 
-    // TODO
     public Rate remove(long timestamp) {
-        Iterator<Rate> iterator = list.iterator();
-        while (iterator.hasNext()){
+        Iterator<Rate> iterator = liste.iterator();
+        while (iterator.hasNext()) {
             Rate nextRate = iterator.next();
-            if (nextRate.getTimestamp() == timestamp){
+            if (nextRate.getTimestamp() == timestamp) {
                 iterator.remove();
                 return nextRate;
             }
         }
+
         return null;
     }
 
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Rate DB:");
-        sb.append(String.format("%n"));
-        for (Rate rate : list) {
-            sb.append(rate.toString());
+        StringBuilder stringBuilder = new StringBuilder("Zeitstempel " + "RateInEuro\n");
+
+        for (Rate rate: liste) {
+            stringBuilder.append(rate.toString() + String.format("%n"));
         }
-        return sb.toString();
+        return stringBuilder.toString();
     }
+
+//    public static void main(String[] args) {
+//        String h = "Hallo";
+//        String w = "Welt";
+//        System.out.printf("%s%n%s%n",h,w);
+//        String str = String.format("%s%n%s%n",h,w);
+//        System.out.println("------------");
+//        System.out.println(str);
+//    }
 }
